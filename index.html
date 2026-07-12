@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WEDDING TODO LIST</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap');
+
+:root{
+  --bg:#F3EEE6;
+  --surface:#FFFCFA;
+  --surface-soft:#EFE8DE;
+  --ink:#5A5148;
+  --ink-soft:#9A9084;
+  --accent:#C9B8A4;
+  --accent-deep:#B5A08A;
+  --accent-soft:#E8DFD3;
+  --gold:#C2A988;
+  --line:#E4D9CC;
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255,252,248,0.9) 0%, transparent 55%),
+    linear-gradient(180deg, #F7F2EA 0%, var(--bg) 40%, #EFE8DE 100%);
+  font-family:'Zen Kaku Gothic New', sans-serif;
+  color:var(--ink);
+  min-height:100vh;
+}
+.app{
+  max-width:430px;
+  margin:0 auto;
+  padding:0 0 100px;
+}
+
+/* hero photo */
+.hero{
+  position:relative;
+  width:100%;
+  height:280px;
+  overflow:hidden;
+  background:linear-gradient(160deg, #E8DFD3 0%, #D9CBB8 50%, #C9B8A4 100%);
+}
+.hero-img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  animation:heroIn 0.8s ease both;
+}
+.hero-placeholder{
+  width:100%;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  color:rgba(90,81,72,0.55);
+  animation:heroIn 0.8s ease both;
+}
+.hero-placeholder svg{
+  width:48px;
+  height:48px;
+  opacity:0.45;
+}
+.hero-placeholder span{
+  font-size:12px;
+  letter-spacing:0.12em;
+}
+.hero-veil{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg, rgba(90,81,72,0.15) 0%, rgba(90,81,72,0.05) 35%, rgba(243,238,230,0.55) 78%, var(--bg) 100%);
+  pointer-events:none;
+}
+.hero-title{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:28px;
+  text-align:center;
+  z-index:2;
+  padding:0 20px;
+  animation:fadeUp 0.7s 0.15s ease both;
+}
+.hero-title h1{
+  font-family:'Cormorant Garamond', serif;
+  font-weight:500;
+  font-size:28px;
+  letter-spacing:0.14em;
+  margin:0;
+  color:#fff;
+  text-shadow:0 1px 12px rgba(90,81,72,0.35);
+}
+.hero-title p{
+  font-size:11px;
+  color:rgba(255,252,248,0.9);
+  margin:8px 0 0;
+  letter-spacing:0.18em;
+  text-shadow:0 1px 8px rgba(90,81,72,0.3);
+}
+.photo-btn{
+  position:absolute;
+  top:14px;
+  right:14px;
+  z-index:3;
+  font-size:11px;
+  letter-spacing:0.06em;
+  color:var(--ink);
+  background:rgba(255,252,250,0.88);
+  border:1px solid rgba(228,217,204,0.9);
+  border-radius:14px;
+  padding:6px 12px;
+  cursor:pointer;
+  backdrop-filter:blur(6px);
+  transition:transform 0.15s ease, background 0.15s ease;
+}
+.photo-btn:active{ transform:scale(0.96); }
+#photoInput{ display:none; }
+
+@keyframes heroIn{
+  from{ opacity:0; transform:scale(1.04); }
+  to{ opacity:1; transform:scale(1); }
+}
+@keyframes fadeUp{
+  from{ opacity:0; transform:translateY(10px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+
+/* countdown ribbon */
+.ribbon-wrap{
+  display:flex;
+  justify-content:center;
+  margin:6px 0 8px;
+}
+.ribbon{
+  position:relative;
+  width:200px;
+  background:linear-gradient(180deg, var(--accent) 0%, var(--accent-deep) 100%);
+  color:#fff;
+  padding:20px 14px 30px;
+  clip-path: polygon(0 0, 100% 0, 100% 82%, 50% 100%, 0 82%);
+  text-align:center;
+}
+.ribbon .label{
+  font-size:11px;
+  letter-spacing:0.2em;
+  opacity:0.9;
+}
+.ribbon .num{
+  font-family:'Cormorant Garamond', serif;
+  font-size:52px;
+  font-weight:600;
+  line-height:1;
+  margin:4px 0 0;
+}
+.ribbon .unit{
+  font-size:12px;
+  letter-spacing:0.1em;
+  margin-top:2px;
+}
+.date-edit{
+  text-align:center;
+  margin:6px 0 20px;
+}
+.date-edit input[type="date"]{
+  border:none;
+  background:transparent;
+  font-family:'Zen Kaku Gothic New', sans-serif;
+  font-size:12px;
+  color:var(--ink-soft);
+  border-bottom:1px solid var(--line);
+  padding:2px 4px;
+}
+
+/* progress */
+.progress-card{
+  margin:0 20px 18px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:14px 16px;
+}
+.progress-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  margin-bottom:8px;
+}
+.progress-top .ptitle{
+  font-size:12px;
+  color:var(--ink-soft);
+  letter-spacing:0.05em;
+}
+.progress-top .pnum{
+  font-family:'Cormorant Garamond', serif;
+  font-size:20px;
+  font-weight:600;
+  color:var(--accent-deep);
+}
+.progress-track{
+  height:6px;
+  background:var(--surface-soft);
+  border-radius:4px;
+  overflow:hidden;
+}
+.progress-fill{
+  height:100%;
+  background:var(--accent);
+  border-radius:4px;
+  transition:width 0.4s ease;
+}
+
+/* ribbon tabs */
+.tabs{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding:2px 20px 14px;
+  scrollbar-width:none;
+}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{
+  flex:0 0 auto;
+  position:relative;
+  padding:8px 16px 10px;
+  font-size:12px;
+  letter-spacing:0.03em;
+  border-radius:16px 16px 4px 4px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  color:var(--ink-soft);
+  cursor:pointer;
+  user-select:none;
+  white-space:nowrap;
+}
+.tab.active{
+  color:#fff;
+  border-color:transparent;
+}
+.tab .count{
+  margin-left:5px;
+  opacity:0.75;
+  font-size:10px;
+}
+
+/* period sections */
+.period{
+  margin:0 20px 6px;
+  padding:14px 0 4px;
+}
+.period-title{
+  font-family:'Cormorant Garamond', serif;
+  font-size:15px;
+  color:var(--ink-soft);
+  letter-spacing:0.08em;
+  border-bottom:1px solid var(--line);
+  padding-bottom:6px;
+  margin-bottom:10px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.period-title .bar{
+  width:3px;
+  height:12px;
+  background:var(--gold);
+  display:inline-block;
+  border-radius:2px;
+}
+
+.task{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:12px 12px;
+  margin-bottom:8px;
+}
+.task.done{
+  background:var(--surface-soft);
+}
+.seal{
+  flex:0 0 auto;
+  width:26px;
+  height:26px;
+  border-radius:50%;
+  border:1.5px solid var(--accent);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:transform 0.15s ease;
+}
+.seal:active{ transform:scale(0.88); }
+.seal.on{
+  background:var(--accent);
+  border-color:var(--accent);
+}
+.seal svg{ width:13px; height:13px; opacity:0; transition:opacity 0.15s ease; }
+.seal.on svg{ opacity:1; }
+
+.task .body{ flex:1; min-width:0; }
+.task .ttitle{
+  font-size:14px;
+  line-height:1.4;
+}
+.task.done .ttitle{
+  color:var(--ink-soft);
+  text-decoration:line-through;
+  text-decoration-color:var(--accent);
+}
+.task .tcat{
+  display:inline-block;
+  margin-top:3px;
+  font-size:10px;
+  padding:1px 7px;
+  border-radius:8px;
+  color:#fff;
+}
+
+.del{
+  flex:0 0 auto;
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  border:1px solid var(--line);
+  background:var(--surface);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  color:var(--ink-soft);
+  cursor:pointer;
+  font-size:12px;
+}
+.app.editmode .del{ display:flex; }
+
+.empty{
+  text-align:center;
+  color:var(--ink-soft);
+  font-size:13px;
+  padding:40px 20px;
+}
+
+/* top bar actions */
+.actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  padding:0 20px 6px;
+}
+.actbtn{
+  font-size:11px;
+  color:var(--ink-soft);
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:5px 12px;
+  cursor:pointer;
+}
+.actbtn.active{
+  background:var(--ink);
+  color:#fff;
+  border-color:var(--ink);
+}
+
+/* add sheet */
+.fab{
+  position:fixed;
+  right:calc(50% - 215px + 20px);
+  bottom:24px;
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  background:var(--accent-deep);
+  color:#fff;
+  border:none;
+  font-size:24px;
+  box-shadow:0 4px 14px rgba(90,81,72,0.22);
+  cursor:pointer;
+  z-index:5;
+}
+@media (max-width:470px){
+  .fab{ right:20px; }
+}
+
+.sheet-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(90,81,72,0.35);
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  z-index:10;
+}
+.sheet-overlay.open{ display:flex; }
+.sheet{
+  width:100%;
+  max-width:430px;
+  background:var(--surface);
+  border-radius:20px 20px 0 0;
+  padding:20px 20px 26px;
+}
+.sheet h3{
+  font-family:'Cormorant Garamond', serif;
+  font-size:18px;
+  letter-spacing:0.06em;
+  margin:0 0 14px;
+}
+.sheet label{
+  display:block;
+  font-size:11px;
+  color:var(--ink-soft);
+  margin:12px 0 5px;
+}
+.sheet input[type="text"], .sheet select{
+  width:100%;
+  padding:9px 10px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  font-family:'Zen Kaku Gothic New', sans-serif;
+  font-size:14px;
+  background:var(--surface-soft);
+  color:var(--ink);
+}
+.sheet-btns{
+  display:flex;
+  gap:8px;
+  margin-top:18px;
+}
+.sheet-btns button{
+  flex:1;
+  padding:11px;
+  border-radius:10px;
+  font-size:13px;
+  border:1px solid var(--line);
+  background:var(--surface-soft);
+  cursor:pointer;
+  color:var(--ink);
+}
+.sheet-btns button.primary{
+  background:var(--accent-deep);
+  border-color:var(--accent-deep);
+  color:#fff;
+}
+.loading{
+  text-align:center;
+  padding:60px 20px;
+  color:var(--ink-soft);
+  font-size:13px;
+}
+</style>
+</head>
+<body>
+<div id="root" class="loading">読み込み中…</div>
+
+<script>
+const CATS = {
+  venue:   { label:'会場・料理',    color:'#C2A988' },
+  dress:   { label:'衣装・美容',    color:'#C9B8A4' },
+  invite:  { label:'招待状・ゲスト', color:'#B5A894' },
+  photo:   { label:'写真・映像',    color:'#A89B8A' },
+  honeymoon:{ label:'新婚旅行',     color:'#BEAA90' },
+  gift:    { label:'引出物・挨拶',  color:'#B8A99A' },
+  day:     { label:'当日準備',      color:'#9E9284' }
+};
+const PERIODS = [
+  { id:'p12',  label:'12ヶ月前〜' },
+  { id:'p9',   label:'9ヶ月前〜' },
+  { id:'p6',   label:'6ヶ月前〜' },
+  { id:'p3',   label:'3ヶ月前〜' },
+  { id:'p1',   label:'1ヶ月前〜' },
+  { id:'p1w',  label:'1週間前〜' },
+  { id:'pday', label:'前日・当日' }
+];
+
+function seedTasks(){
+  const rows = [
+    ['p12','venue','結婚式のスタイルと予算を決める'],
+    ['p12','venue','会場をいくつか見学・比較する'],
+    ['p12','venue','会場を仮予約する'],
+    ['p12','day','ゲストの人数をおおまかに決める'],
+    ['p9','venue','会場を本契約する'],
+    ['p9','dress','ドレスショップを見学・試着する'],
+    ['p9','photo','フォトグラファーや前撮りプランを検討する'],
+    ['p9','honeymoon','新婚旅行の行き先を相談する'],
+    ['p6','dress','ドレス・タキシードを決定する'],
+    ['p6','invite','招待状のデザインを決める'],
+    ['p6','invite','ゲストリストを確定する'],
+    ['p6','honeymoon','新婚旅行を予約する'],
+    ['p6','gift','引出物選びを始める'],
+    ['p3','invite','招待状を発送する'],
+    ['p3','dress','小物(ベール・靴・アクセサリー)を揃える'],
+    ['p3','photo','前撮りを実施する'],
+    ['p3','gift','引出物を発注する'],
+    ['p3','day','席次表・席札の準備を始める'],
+    ['p1','day','出欠を確認し最終ゲスト人数を確定する'],
+    ['p1','dress','最終フィッティングを行う'],
+    ['p1','gift','挨拶状や両親へのプレゼントを準備する'],
+    ['p1','venue','会場と最終打ち合わせをする'],
+    ['p1','day','演出・BGM・スピーチ依頼を確定する'],
+    ['p1w','day','席次表とタイムラインを最終確認する'],
+    ['p1w','dress','ヘアメイクリハーサルを行う'],
+    ['p1w','day','当日の持ち物リストを準備する'],
+    ['p1w','venue','会場への支払いを済ませる'],
+    ['pday','day','忘れ物チェックリストを確認する'],
+    ['pday','day','家族や友人へのお礼を準備する'],
+    ['pday','day','リラックスして当日を楽しむ']
+  ];
+  return rows.map((r,i)=>({ id:'seed-'+i, period:r[0], cat:r[1], title:r[2], done:false }));
+}
+
+let state = { weddingDate:'', tasks:[], filter:'all', editMode:false, couplePhoto:'' };
+
+async function storageGet(key){
+  try{
+    if(window.storage && window.storage.get){
+      const res = await window.storage.get(key, false);
+      if(res && res.value) return res.value;
+    }
+  }catch(e){}
+  try{
+    return localStorage.getItem(key);
+  }catch(e){
+    return null;
+  }
+}
+
+async function storageSet(key, value){
+  try{
+    if(window.storage && window.storage.set){
+      await window.storage.set(key, value, false);
+      return;
+    }
+  }catch(e){}
+  try{
+    localStorage.setItem(key, value);
+  }catch(e){
+    console.error('保存に失敗しました', e);
+  }
+}
+
+async function load(){
+  try{
+    const raw = await storageGet('wedding-todo-state');
+    if(raw){
+      const parsed = JSON.parse(raw);
+      state.weddingDate = parsed.weddingDate || '';
+      state.tasks = parsed.tasks && parsed.tasks.length ? parsed.tasks : seedTasks();
+      state.couplePhoto = parsed.couplePhoto || '';
+    } else {
+      state.tasks = seedTasks();
+    }
+  }catch(e){
+    state.tasks = seedTasks();
+  }
+  render();
+}
+
+async function save(){
+  await storageSet('wedding-todo-state', JSON.stringify({
+    weddingDate: state.weddingDate,
+    tasks: state.tasks,
+    couplePhoto: state.couplePhoto
+  }));
+}
+
+function daysUntil(){
+  if(!state.weddingDate) return null;
+  const target = new Date(state.weddingDate + 'T00:00:00');
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const diff = Math.round((target - today) / 86400000);
+  return diff;
+}
+
+function checkIcon(){
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+}
+
+function coupleIcon(){
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><circle cx="16" cy="8" r="2.5"/><path d="M3 20c0-3.2 2.7-5.5 6-5.5s6 2.3 6 5.5"/><path d="M13.5 14.8c1 .7 2.2 1.1 3.5 1.1 2.5 0 4.5 1.5 4.5 3.6"/></svg>';
+}
+
+function compressImage(file, maxW, quality){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = ()=>{
+      const img = new Image();
+      img.onerror = reject;
+      img.onload = ()=>{
+        const scale = Math.min(1, maxW / img.width);
+        const w = Math.round(img.width * scale);
+        const h = Math.round(img.height * scale);
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function render(){
+  const root = document.getElementById('root');
+  const total = state.tasks.length;
+  const doneCount = state.tasks.filter(t=>t.done).length;
+  const pct = total ? Math.round(doneCount/total*100) : 0;
+  const d = daysUntil();
+
+  let ribbonHtml;
+  if(d === null){
+    ribbonHtml = '<div class="label">結婚式まで</div><div class="num" style="font-size:26px;">日付を<br>設定してね</div>';
+  } else if(d >= 0){
+    ribbonHtml = '<div class="label">結婚式まで</div><div class="num">'+d+'</div><div class="unit">日</div>';
+  } else {
+    ribbonHtml = '<div class="label">結婚式から</div><div class="num">'+Math.abs(d)+'</div><div class="unit">日経過</div>';
+  }
+
+  const tabsHtml = ['<div class="tab '+(state.filter==='all'?'active':'')+'" style="'+(state.filter==='all'?'background:#5A5148':'')+'" data-tab="all">すべて<span class="count">'+total+'</span></div>']
+    .concat(Object.keys(CATS).map(cid=>{
+      const c = CATS[cid];
+      const n = state.tasks.filter(t=>t.cat===cid).length;
+      const active = state.filter===cid;
+      return '<div class="tab '+(active?'active':'')+'" style="'+(active?'background:'+c.color:'')+'" data-tab="'+cid+'">'+c.label+'<span class="count">'+n+'</span></div>';
+    })).join('');
+
+  const filtered = state.filter==='all' ? state.tasks : state.tasks.filter(t=>t.cat===state.filter);
+
+  let listHtml = '';
+  if(filtered.length === 0){
+    listHtml = '<div class="empty">タスクがありません。右下の + から追加できます。</div>';
+  } else {
+    PERIODS.forEach(p=>{
+      const items = filtered.filter(t=>t.period===p.id);
+      if(items.length===0) return;
+      listHtml += '<div class="period"><div class="period-title"><span class="bar"></span>'+p.label+'</div>';
+      items.forEach(t=>{
+        const c = CATS[t.cat];
+        listHtml += '<div class="task '+(t.done?'done':'')+'">'+
+          '<div class="seal '+(t.done?'on':'')+'" data-toggle="'+t.id+'">'+checkIcon()+'</div>'+
+          '<div class="body"><div class="ttitle">'+escapeHtml(t.title)+'</div>'+
+          '<span class="tcat" style="background:'+c.color+'">'+c.label+'</span></div>'+
+          '<div class="del" data-del="'+t.id+'">×</div>'+
+        '</div>';
+      });
+      listHtml += '</div>';
+    });
+  }
+
+  const catOptions = Object.keys(CATS).map(cid=>'<option value="'+cid+'">'+CATS[cid].label+'</option>').join('');
+  const periodOptions = PERIODS.map(p=>'<option value="'+p.id+'">'+p.label+'</option>').join('');
+
+  const heroMedia = state.couplePhoto
+    ? '<img class="hero-img" src="'+state.couplePhoto+'" alt="ふたりの写真">'
+    : '<div class="hero-placeholder">'+coupleIcon()+'<span>PHOTO</span></div>';
+
+  root.className = state.editMode ? 'app editmode' : 'app';
+  root.innerHTML =
+    '<div class="hero">'+
+      heroMedia+
+      '<div class="hero-veil"></div>'+
+      '<button type="button" class="photo-btn" id="photoBtn">'+(state.couplePhoto?'写真を変更':'写真を追加')+'</button>'+
+      '<input type="file" id="photoInput" accept="image/*">'+
+      '<div class="hero-title"><h1>WEDDING TODO LIST</h1><p>ふたりのペースで、少しずつ。</p></div>'+
+    '</div>'+
+    '<div class="ribbon-wrap"><div class="ribbon">'+ribbonHtml+'</div></div>'+
+    '<div class="date-edit"><input type="date" id="dateInput" value="'+state.weddingDate+'"></div>'+
+    '<div class="progress-card"><div class="progress-top"><span class="ptitle">全体の進み具合</span><span class="pnum">'+pct+'%</span></div>'+
+    '<div class="progress-track"><div class="progress-fill" style="width:'+pct+'%"></div></div></div>'+
+    '<div class="actions"><div class="actbtn '+(state.editMode?'active':'')+'" id="editToggle">'+(state.editMode?'完了':'編集')+'</div></div>'+
+    '<div class="tabs" id="tabs">'+tabsHtml+'</div>'+
+    '<div id="list">'+listHtml+'</div>'+
+    '<button class="fab" id="fabAdd">+</button>'+
+    '<div class="sheet-overlay" id="sheetOverlay"><div class="sheet">'+
+      '<h3>タスクを追加</h3>'+
+      '<label>やること</label><input type="text" id="newTitle" placeholder="例：ブーケの打ち合わせをする">'+
+      '<label>カテゴリ</label><select id="newCat">'+catOptions+'</select>'+
+      '<label>時期の目安</label><select id="newPeriod">'+periodOptions+'</select>'+
+      '<div class="sheet-btns"><button id="cancelAdd">キャンセル</button><button class="primary" id="confirmAdd">追加する</button></div>'+
+    '</div></div>';
+
+  attachEvents();
+}
+
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function attachEvents(){
+  document.getElementById('dateInput').addEventListener('change', e=>{
+    state.weddingDate = e.target.value;
+    save();
+    render();
+  });
+  document.getElementById('editToggle').addEventListener('click', ()=>{
+    state.editMode = !state.editMode;
+    render();
+  });
+  document.getElementById('photoBtn').addEventListener('click', ()=>{
+    document.getElementById('photoInput').click();
+  });
+  document.getElementById('photoInput').addEventListener('change', async e=>{
+    const file = e.target.files && e.target.files[0];
+    if(!file) return;
+    try{
+      state.couplePhoto = await compressImage(file, 1200, 0.82);
+      await save();
+      render();
+    }catch(err){
+      console.error('写真の読み込みに失敗しました', err);
+      alert('写真の読み込みに失敗しました。別の画像をお試しください。');
+    }
+  });
+  document.getElementById('tabs').addEventListener('click', e=>{
+    const tab = e.target.closest('.tab');
+    if(!tab) return;
+    state.filter = tab.dataset.tab;
+    render();
+  });
+  document.getElementById('list').addEventListener('click', e=>{
+    const seal = e.target.closest('[data-toggle]');
+    if(seal){
+      const t = state.tasks.find(x=>x.id===seal.dataset.toggle);
+      if(t){ t.done = !t.done; save(); render(); }
+      return;
+    }
+    const del = e.target.closest('[data-del]');
+    if(del){
+      state.tasks = state.tasks.filter(x=>x.id!==del.dataset.del);
+      save(); render();
+    }
+  });
+  document.getElementById('fabAdd').addEventListener('click', ()=>{
+    document.getElementById('sheetOverlay').classList.add('open');
+  });
+  document.getElementById('sheetOverlay').addEventListener('click', e=>{
+    if(e.target.id==='sheetOverlay') e.target.classList.remove('open');
+  });
+  document.getElementById('cancelAdd').addEventListener('click', ()=>{
+    document.getElementById('sheetOverlay').classList.remove('open');
+  });
+  document.getElementById('confirmAdd').addEventListener('click', ()=>{
+    const title = document.getElementById('newTitle').value.trim();
+    if(!title) return;
+    const cat = document.getElementById('newCat').value;
+    const period = document.getElementById('newPeriod').value;
+    state.tasks.push({ id:'t-'+Date.now(), period, cat, title, done:false });
+    save();
+    document.getElementById('sheetOverlay').classList.remove('open');
+    render();
+  });
+}
+
+load();
+</script>
+</body>
+</html>
